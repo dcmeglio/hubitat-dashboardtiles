@@ -1,0 +1,19 @@
+{
+	"packageName": "Holiday Switcher",
+	"minimumHEVersion": "2.1.9",
+	"author": "Dominick Meglio",
+	"version": "1.1.0",
+	"dateReleased": "2020-04-21",
+	"documentationLink": "https://github.com/dcmeglio/hubitat-holidayswitcher/blob/master/README.md",
+	"communityLink": "https://community.hubitat.com/t/release-holiday-switcher/26136",
+	"releaseNotes": "Added support for pulling local holidays",
+	"apps" : [
+		{
+			"id" : "134c2efe-9806-4aaf-80b6-daf4092311db",
+			"name": "Holiday Switcher",
+			"namespace": "dcm.holiday",
+			"location": "https://raw.githubusercontent.com/dcmeglio/hubitat-holidayswitcher/master/Holiday_Switcher.groovy",
+			"required": true
+		}
+	]
+}

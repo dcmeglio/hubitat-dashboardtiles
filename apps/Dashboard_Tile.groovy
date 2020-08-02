@@ -57,6 +57,7 @@ def prefSettings() {
 			}
 			table += "</table>"
 			paragraph table
+			paragraph "<button onclick='return addMarkdown(\"**\")'><b>B</b></button><button onclick='return addMarkdown(\"_\")'><i>I</i></button><button onclick='return addMarkdown(\"__\")'><u>U</u></button><button onclick='return addMarkdown(\"-<\",\">-\")'>Center</button>"
 			input "tileTemplate", "textarea", title: "Display template", required: true
        
         }
@@ -159,9 +160,9 @@ def getFormat(type, myText=""){			// Modified from @Stephack Code
 
 def miniMarkdownToHtml(str) {
 	def basicFormatting = str
-		.replaceAll(/(?ms)-\[(.+?)\]-/, "<center>\$1</center>")
+		.replaceAll(/(?ms)-<(.+?)>-/, "<center>\$1</center>")
 		.replaceAll(/(?m)^(?:\*\*\*+)|(?:===+)$/, "<hr>")
-		.replaceAll(/(?ms)__(.+?)__/, "<b>\$1</b>")
+		.replaceAll(/(?ms)__(.+?)__/, "<u>\$1</u>")
 		.replaceAll(/(?ms)\*\*(.+?)\*\*/, "<b>\$1</b>")
 		.replaceAll(/(?ms)_(.+?)_/, "<i>\$1</i>")
 		.replaceAll(/(?ms)\*(.+?)\*/, "<i>\$1</i>")
@@ -246,6 +247,26 @@ def injectJS(name) {
     		var textAreaTxt = txtArea.val();
     		var txtToAdd = "@"+deviceId+ ":" + \$('#attr_'+attrId).val() + "@";
     		txtArea.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos));
+			return false
+		}
+
+		function addMarkdown(md, endMd) {
+			var editor = \$('textarea[name="settings\\[tileTemplate\\]"]');
+			var editorJs = editor[0]
+            var editorHTML = editor.val();
+            var selectionStart = 0, selectionEnd = 0;
+            if (editorJs.selectionStart) selectionStart = editorJs.selectionStart;
+            if (editorJs.selectionEnd) selectionEnd = editorJs.selectionEnd;
+            if (selectionStart != selectionEnd) {
+                var editorCharArray = editorHTML.split("");
+				if (!endMd)
+                	editorCharArray.splice(selectionEnd, 0, md);
+				else
+					editorCharArray.splice(selectionEnd, 0, endMd);
+                editorCharArray.splice(selectionStart, 0, md);
+                editorHTML = editorCharArray.join("");
+                editor.val(editorHTML);
+			}
 			return false
 		}
 	</script>"""
