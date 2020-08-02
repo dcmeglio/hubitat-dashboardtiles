@@ -41,13 +41,19 @@ def prefSettings() {
     return dynamicPage(name: "prefSettings", title: "", install: true, uninstall: true) {
 		section {
 			paragraph "Please choose which devices to include as part of this tile and define the HTML template of the tile."
-
+			injectJS()
 			input "devices", "capability.*", title: "Devices to monitor", multiple:true, required:true, submitOnChange: true
 
-		    def table = "<table><tr><td>Device</td><td>Device Network Id</td><td>Id</td></tr>"
+		    def table = "<table><tr><td>Device</td><td>Id</td><td>Attributes</td></tr>"
 
+			def i = 0
 			for (dev in devices) {
-				table += "<tr><td>${dev.displayName}</td><td>${dev.deviceNetworkId}</td><td>${dev.id}</td></tr>"
+				def attrs = dev.getSupportedAttributes()
+				def attrSel = "<select id='attr_${i}'>"
+				attrs.each { attrSel += "<option value='${it.name}'>${it.name}</option>"}
+				attrSel += "</select>"
+				table += "<tr><td>${dev.displayName}</td><td>${dev.id}</td><td>${attrSel}<button onclick='return addAttr(${dev.id},${i})'>Add</button></td></tr>"
+				i++
 			}
 			table += "</table>"
 			paragraph table
@@ -228,4 +234,19 @@ def miniMarkdownToHtml(str) {
 		output += "</table>"
 
 	return output
+}
+
+def injectJS(name) {
+	paragraph """<script>
+		\$('textarea[name="settings\\[tileTemplate\\]"]').prop("rows", 20);
+
+		function addAttr(deviceId, attrId) {
+			var txtArea = \$('textarea[name="settings\\[tileTemplate\\]"]')
+			var caretPos = txtArea[0].selectionStart;
+    		var textAreaTxt = txtArea.val();
+    		var txtToAdd = "@"+deviceId+ ":" + \$('#attr_'+attrId).val() + "@";
+    		txtArea.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos));
+			return false
+		}
+	</script>"""
 }
